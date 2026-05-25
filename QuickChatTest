@@ -1,0 +1,53 @@
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+class QuickChatTest {
+
+    @Test
+    void testGenerateMessageId_NotNullAndLength10() {
+        String messageId = QuickChat.generateMessageId();
+        assertNotNull(messageId, "Message ID should not be null");
+        assertEquals(10, messageId.length(), "Message ID should be exactly 10 characters long");
+        assertTrue(messageId.matches("\\d{10}"), "Message ID should contain only digits");
+    }
+
+    @Test
+    void testGenerateMessageHash_TwoWords() {
+        String messageId = "1234567890";
+        String message = "hello world";
+        int count = 1; // currently unused
+
+        String hash = QuickChat.generateMessageHash(messageId, count, message);
+        assertEquals("12:HELLOWORLD", hash, "Hash should combine first 2 digits of ID and uppercase first/last word");
+    }
+
+    @Test
+    void testGenerateMessageHash_OneWord() {
+        String messageId = "0987654321";
+        String message = "hello";
+        int count = 1;
+
+        String hash = QuickChat.generateMessageHash(messageId, count, message);
+        assertEquals("09:HELLOHELLO", hash, "Single-word message should repeat the word in hash");
+    }
+
+    @Test
+    void testGenerateMessageHash_EmptyMessage() {
+        String messageId = "1111111111";
+        String message = "";
+        int count = 1;
+
+        String hash = QuickChat.generateMessageHash(messageId, count, message);
+        assertEquals("11:", hash, "Empty message should produce only the ID prefix in hash");
+    }
+
+    @Test
+    void testGenerateMessageHash_MultipleSpaces() {
+        String messageId = "2222222222";
+        String message = "   quick    chat  test   ";
+        int count = 1;
+
+        String hash = QuickChat.generateMessageHash(messageId, count, message);
+        assertEquals("22:QUICKTEST", hash, "Hash should correctly handle multiple spaces and trim properly");
+    }
+}
