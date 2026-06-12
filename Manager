@@ -1,0 +1,104 @@
+public class Manager {
+
+    // Maximum number of messages the system can store
+    private static int size = 100;
+    public static int messagecount = 0;
+
+    // Arrays to store message details
+    public static String[] recipients = new String[size];
+    public static String[] messages = new String[size];
+    public static String[] hashes = new String[size];
+    public static String[] senders = new String[size];
+    public static String[] messageIDs = new String[size];
+
+    public static void addmessage(String recipient, String message, String hash, String sender, String messageID) {
+        if (messagecount < size) {
+            senders[messagecount] = sender;
+            recipients[messagecount] = recipient;
+            messages[messagecount] = message;
+            hashes[messagecount] = hash;
+            messageIDs[messagecount] = messageID;
+            messagecount++;
+        } else {
+            System.out.println("message storage is full");
+
+        }
+    }
+
+    public static void displaysendersandrecipients() {
+        System.out.println("Senders and recipients");
+        for (int i = 0; i < messagecount; i++) {
+            System.out.println("Sender" + senders[i] + "Recipients" + recipients[i]);
+        }
+
+    }
+
+    public static void displaylongestmessage() {
+        if (messagecount == 0) {// No messages to display
+            System.out.println("No messages to display");
+            return;
+        }
+
+        int maxindex = 0;
+        for (int i = 0; i < messagecount; i++) {
+            if (messages[i].length() > messages[maxindex].length()) {
+                maxindex = i;
+            }
+        }
+        System.out.println(" Longest messages" + messages[maxindex]);
+    }
+
+    public static void searchmesssageID(String ID) {
+        for (int i = 0; i < messagecount; i++) {
+            if (messageIDs[i].equals(ID)) {
+                System.out.println("Recipients" + recipients[i]);
+                System.out.println("MessageID" + messageIDs[i]);
+                return;
+            }
+        }
+        System.out.println("MessageID not found");
+    }
+
+    public static void searchRecipient(String Recipient) {
+        boolean found = false;
+        for (int i = 0; i < messagecount; i++) {
+            // Corrected comparison to the parameter instead of the array itself
+            if (recipients[i].equals(recipients)) {
+                System.out.println("Recipient" + recipients[i] + "message" + messages[i]);
+                found = true;
+
+            }
+        }
+        if (!found){
+            System.out.println("Messages not found for recipient" + recipients);
+        }
+    }
+    public static void deletemessagehash(String hash) {
+        for (int i = 0; i < messagecount; i++) {
+            if (hashes[i].equals(hash)) {
+                System.out.println("Deleting message" + messages[i]);
+            }
+            for (int j = i; j < messagecount - 1; j++) {
+                senders[j] = senders[j + 1];
+                messages[j] = messages[j + 1];
+                hashes[j] = hashes[j + 1];
+                recipients[j] = recipients[j + 1];
+                messageIDs[j] = messageIDs[j + 1];
+            }
+            messagecount--;// Reduce the message count
+            return;// Stop after deleting the first matching message
+
+        }
+        System.out.println("Hash not found");
+    }
+    public static void displayfullreport(){
+        System.out.println("Full message report");
+        for (int i = 0; i < messagecount; i++){
+            System.out.println("Senders" + senders[i]);
+            System.out.println("Recipients" + recipients[i]);
+            System.out.println("Messages" + messages[i]);
+            System.out.println("Hashes" + hashes[i]);
+            System.out.println("MessageIDs" + messageIDs[i]);
+        }
+    }
+}
