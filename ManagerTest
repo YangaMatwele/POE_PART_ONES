@@ -1,0 +1,119 @@
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class ManagerTest {
+    @BeforeEach
+    void setUp() {
+        Manager.messagecount = 0;
+
+        for (int i = 0; i < Manager.recipients.length; i++) {
+            Manager.recipients[i] = null;
+            Manager.messages[i] = null;
+            Manager.hashes[i] = null;
+            Manager.senders[i] = null;
+            Manager.messageIDs[i] = null;
+        }
+    }
+
+    @Test
+    void testAddMessage() {
+        Manager.addmessage(
+                "0821234567",
+                "Hello World",
+                "HASH001",
+                "Sender",
+                "MSG001");
+
+        assertEquals(1, Manager.messagecount);
+        assertEquals("0821234567", Manager.recipients[0]);
+        assertEquals("Hello World", Manager.messages[0]);
+        assertEquals("HASH001", Manager.hashes[0]);
+        assertEquals("Sender", Manager.senders[0]);
+        assertEquals("MSG001", Manager.messageIDs[0]);
+    }
+
+    @Test
+    void testAddMultipleMessages() {
+        Manager.addmessage("111", "Message 1", "HASH1", "Sender1", "MSG1");
+        Manager.addmessage("222", "Message 2", "HASH2", "Sender2", "MSG2");
+
+        assertEquals(2, Manager.messagecount);
+        assertEquals("222", Manager.recipients[1]);
+        assertEquals("Message 2", Manager.messages[1]);
+    }
+
+    @Test
+    void testDeleteMessageHash() {
+        Manager.addmessage("111", "Message 1", "HASH1", "Sender1", "MSG1");
+        Manager.addmessage("222", "Message 2", "HASH2", "Sender2", "MSG2");
+
+        Manager.deletemessagehash("HASH1");
+
+        assertEquals(1, Manager.messagecount);
+        assertEquals("222", Manager.recipients[0]);
+        assertEquals("Message 2", Manager.messages[0]);
+        assertEquals("HASH2", Manager.hashes[0]);
+    }
+
+    @Test
+    void testDeleteNonExistingHash() {
+        Manager.addmessage("111", "Message 1", "HASH1", "Sender1", "MSG1");
+
+        Manager.deletemessagehash("INVALID");
+
+        assertEquals(1, Manager.messagecount);
+    }
+
+    @Test
+    void testLongestMessageLogic() {
+        Manager.addmessage("111", "Short", "HASH1", "Sender1", "MSG1");
+        Manager.addmessage(
+                "222",
+                "This is the longest message",
+                "HASH2",
+                "Sender2",
+                "MSG2");
+
+        int longestIndex = 0;
+
+        for (int i = 0; i < Manager.messagecount; i++) {
+            if (Manager.messages[i].length() >
+                    Manager.messages[longestIndex].length()) {
+                longestIndex = i;
+            }
+        }
+
+        assertEquals(
+                "This is the longest message",
+                Manager.messages[longestIndex]);
+    }
+
+    @Test
+    void testSearchMessageIDDataExists() {
+        Manager.addmessage(
+                "0821234567",
+                "Test Message",
+                "HASH001",
+                "Sender",
+                "MSG001");
+
+        assertEquals("MSG001", Manager.messageIDs[0]);
+        assertEquals("0821234567", Manager.recipients[0]);
+    }
+
+    @Test
+    void testMessageCountIncrement() {
+        assertEquals(0, Manager.messagecount);
+
+        Manager.addmessage(
+                "0821234567",
+                "Test",
+                "HASH001",
+                "Sender",
+                "MSG001");
+
+        assertEquals(1, Manager.messagecount);
+    }
+}
